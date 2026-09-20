@@ -13,6 +13,22 @@ class Player:
         self.body = pygame.Rect(x-5, y-60, 40, 60)
         self.legs = pygame.Rect(x, y, 30, 40)
         self.speed = 10
+        self.velocity = 1
+
+    def apply_gravity(self, blocks):
+        self.head.y += self.velocity
+        self.body.y += self.velocity
+        self.legs.y += self.velocity
+        self.velocity += 1
+
+        for block in blocks:
+            if block.rect.colliderect(self.legs):
+                self.velocity = 0
+                self.legs.bottom = block.rect.top
+                self.body.bottom = self.legs.top
+                self.head.bottom = self.body.top
+
+
 
     def draw(self):
         pygame.draw.rect(window, (201, 197, 177), self.head)
@@ -63,8 +79,13 @@ while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             exit()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                player.velocity = -10
 
     player.move()
+    player.apply_gravity(world)
+    player2.apply_gravity(world)
     window.fill((138, 210, 255))
     player.draw()
     player2.draw()
