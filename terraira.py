@@ -30,10 +30,16 @@ class Player:
 
 
 
-    def draw(self):
-        pygame.draw.rect(window, (201, 197, 177), self.head)
-        pygame.draw.rect(window, (32, 138, 250), self.body)
-        pygame.draw.rect(window, (2, 26, 51), self.legs)
+    def draw(self, camera_x,camera_y):
+        head_x = self.head.x - camera_x
+        body_x = self.body.x - camera_x
+        legs_x = self.legs.x - camera_x
+        head_y = self.head.y - camera_y
+        body_y = self.body.y - camera_y
+        legs_y = self.legs.y - camera_y
+        pygame.draw.rect(window, (201, 197, 177), (head_x, head_y, self.head.width, self.head.height))
+        pygame.draw.rect(window, (32, 138, 250), (body_x, body_y, self.body.width, self.body.height))
+        pygame.draw.rect(window, (2, 26, 51), (legs_x, legs_y, self.legs.width, self.legs.height))
 
 
     def move(self):
@@ -53,9 +59,15 @@ class Block:
         self.color = color
         self.rect = pygame.Rect(x, y, 60, 60)
 
-    def draw(self):
-        pygame.draw.rect(window, self.color, self.rect)
-        pygame.draw.rect(window, (0, 0, 0), self.rect,1)
+
+    def draw(self, camera_x, camera_y):
+        block_x = self.rect.x - camera_x
+        block_y = self.rect.y - camera_y
+        pygame.draw.rect(window, self.color, (block_x, block_y, self.rect.width, self.rect.height))
+        pygame.draw.rect(window, (0, 0, 0), (block_x, block_y, self.rect.width, self.rect.height),1)
+
+
+
 
 block = Block(300,200, (39, 168, 73), "Grass")
 
@@ -87,9 +99,11 @@ while True:
     player.apply_gravity(world)
     player2.apply_gravity(world)
     window.fill((138, 210, 255))
-    player.draw()
-    player2.draw()
+    camera_x = player.body.centerx - 400
+    camera_y = player.body.centery - 400
+    player.draw(camera_x, camera_y)
+    player2.draw(camera_x, camera_y)
     for block in world:
-        block.draw()
+        block.draw(camera_x, camera_y)
     pygame.display.update()
     clock.tick(60)
