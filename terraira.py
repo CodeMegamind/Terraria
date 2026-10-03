@@ -87,6 +87,8 @@ for i in range(27):
 for i in range(27):
     world.append(Block(i * 60, 540, (89, 89, 89), "Stone"))
 
+camera_x = player.body.centerx - 400
+camera_y = player.body.centery - 400
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -95,6 +97,27 @@ while True:
             if event.key == pygame.K_UP:
                 player.velocity = -10
 
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 3:
+                print("Right click detected at position:", event.pos)
+                mouse_x = event.pos[0]
+                mouse_y = event.pos[1]
+                world_x = mouse_x + camera_x
+                world_y = mouse_y + camera_y
+                block_x = (world_x // 60) * 60
+                block_y = (world_y // 60) * 60
+                block = Block(block_x,block_y, (39, 168, 73), "Grass")
+                world.append(block)
+            if event.button == 1:
+                mouse_x = event.pos[0]
+                mouse_y = event.pos[1]
+                world_x = mouse_x + camera_x
+                world_y = mouse_y + camera_y
+                block_x = (world_x // 60) * 60
+                block_y = (world_y // 60) * 60
+                for block in world:
+                    if block.rect.topleft == (block_x, block_y):
+                        world.remove(block)
     player.move()
     player.apply_gravity(world)
     player2.apply_gravity(world)
