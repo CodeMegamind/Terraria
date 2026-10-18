@@ -66,13 +66,30 @@ class Block:
         pygame.draw.rect(window, self.color, (block_x, block_y, self.rect.width, self.rect.height))
         pygame.draw.rect(window, (0, 0, 0), (block_x, block_y, self.rect.width, self.rect.height),1)
 
+class Inventory:
+    def __init__(self):
+        self.inventory = {"grass": 64, "dirt": 64, "stone": 64}
 
 
+
+    def draw(self):
+        pygame.draw.rect(window, (124, 189, 107), (10, 10, 160, 60))
+        pygame.draw.rect(window, (151, 109, 77), (250, 10, 160, 60))
+        pygame.draw.rect(window, (126, 126, 126), (500, 10, 160, 60))
+        font = pygame.font.SysFont('Arial', 50)
+        grass = font.render("1: Grass 64", True, (0, 0, 0))
+        dirt = font.render("2: Dirt 64", True, (0, 0, 0))
+        stone = font.render("1: Stone 64", True, (0, 0, 0))
+
+        window.blit(grass, (100, 150))
+        window.blit(dirt, (100, 150))
+        window.blit(stone, (100, 150))
 
 block = Block(300,200, (39, 168, 73), "Grass")
 
 player = Player(400, 200)
 player2 = Player()
+inventory = Inventory()
 
 world = []
 for i in range(27):
@@ -126,6 +143,7 @@ while True:
     camera_y = player.body.centery - 400
     player.draw(camera_x, camera_y)
     player2.draw(camera_x, camera_y)
+    inventory.draw()
     for block in world:
         block.draw(camera_x, camera_y)
     pygame.display.update()
