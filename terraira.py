@@ -69,21 +69,29 @@ class Block:
 class Inventory:
     def __init__(self):
         self.inventory = {"grass": 64, "dirt": 64, "stone": 64}
+        self.active_element = "stone"
+
 
 
 
     def draw(self):
+        if self.active_element == "grass":
+            pygame.draw.rect(window, (255, 255, 0), (8, 8, 162, 62))
         pygame.draw.rect(window, (124, 189, 107), (10, 10, 160, 60))
+        if self.active_element == "dirt":
+            pygame.draw.rect(window, (255, 255, 0), (248, 8, 162, 62))
         pygame.draw.rect(window, (151, 109, 77), (250, 10, 160, 60))
+        if self.active_element == "stone":
+            pygame.draw.rect(window, (255, 255, 0), (498, 8, 162, 62))
         pygame.draw.rect(window, (126, 126, 126), (500, 10, 160, 60))
-        font = pygame.font.SysFont('Arial', 50)
+        font = pygame.font.SysFont('Arial', 31)
         grass = font.render("1: Grass 64", True, (0, 0, 0))
         dirt = font.render("2: Dirt 64", True, (0, 0, 0))
-        stone = font.render("1: Stone 64", True, (0, 0, 0))
+        stone = font.render("3: Stone 64", True, (0, 0, 0))
 
-        window.blit(grass, (100, 150))
-        window.blit(dirt, (100, 150))
-        window.blit(stone, (100, 150))
+        window.blit(grass, (10, 10))
+        window.blit(dirt, (250, 10))
+        window.blit(stone, (500, 10))
 
 block = Block(300,200, (39, 168, 73), "Grass")
 
@@ -113,7 +121,12 @@ while True:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
                 player.velocity = -10
-
+            if event.key == pygame.K_1:
+                inventory.active_element = "grass"
+            if event.key == pygame.K_2:
+                inventory.active_element = "dirt"
+            if event.key == pygame.K_3:
+                inventory.active_element = "stone"
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 3:
                 print("Right click detected at position:", event.pos)
@@ -135,6 +148,8 @@ while True:
                 for block in world:
                     if block.rect.topleft == (block_x, block_y):
                         world.remove(block)
+
+
     player.move()
     player.apply_gravity(world)
     player2.apply_gravity(world)
