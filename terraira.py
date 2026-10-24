@@ -69,7 +69,7 @@ class Block:
 class Inventory:
     def __init__(self):
         self.inventory = {"grass": 64, "dirt": 64, "stone": 64}
-        self.active_element = "stone"
+        self.active_element = "grass"
 
 
 
@@ -85,9 +85,9 @@ class Inventory:
             pygame.draw.rect(window, (255, 255, 0), (498, 8, 162, 62))
         pygame.draw.rect(window, (126, 126, 126), (500, 10, 160, 60))
         font = pygame.font.SysFont('Arial', 31)
-        grass = font.render("1: Grass 64", True, (0, 0, 0))
-        dirt = font.render("2: Dirt 64", True, (0, 0, 0))
-        stone = font.render("3: Stone 64", True, (0, 0, 0))
+        grass = font.render("1: Grass " + str(self.inventory["grass"]), True, (0, 0, 0))
+        dirt = font.render("2: Dirt " + str(self.inventory["dirt"]), True, (0, 0, 0))
+        stone = font.render("3: Stone " + str(self.inventory["stone"]), True, (0, 0, 0))
 
         window.blit(grass, (10, 10))
         window.blit(dirt, (250, 10))
@@ -136,7 +136,21 @@ while True:
                 world_y = mouse_y + camera_y
                 block_x = (world_x // 60) * 60
                 block_y = (world_y // 60) * 60
-                block = Block(block_x,block_y, (39, 168, 73), "Grass")
+                if inventory.active_element == "grass":
+                    if inventory.inventory["grass"] <= 0:
+                        continue
+                    block = Block(block_x,block_y, (39, 168, 73), "Grass")
+                    inventory.inventory["grass"] -= 1
+                if inventory.active_element == "dirt":
+                    if inventory.inventory["dirt"] <= 0:
+                        continue
+                    block = Block(block_x,block_y, (165, 42, 42), "Dirt")
+                    inventory.inventory["dirt"] -= 1
+                if inventory.active_element == "stone":
+                    if inventory.inventory["stone"] <= 0:
+                        continue
+                    block = Block(block_x,block_y, (89, 89, 89), "Stone")
+                    inventory.inventory["stone"] -= 1
                 world.append(block)
             if event.button == 1:
                 mouse_x = event.pos[0]
@@ -147,6 +161,8 @@ while True:
                 block_y = (world_y // 60) * 60
                 for block in world:
                     if block.rect.topleft == (block_x, block_y):
+                        if block.type == "Grass":
+                            inventory.inventory["grass"] += 1
                         world.remove(block)
 
 
