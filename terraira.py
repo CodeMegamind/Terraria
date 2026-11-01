@@ -3,8 +3,14 @@ from turtledemo.lindenmayer import draw
 import pygame
 
 pygame.init()
+pygame.mixer.init()
 window = pygame.display.set_mode((800, 600))
 clock = pygame.time.Clock()
+jump_sound = pygame.mixer.Sound("jump.wav")
+click_sound = pygame.mixer.Sound("click.wav")
+break_sound = pygame.mixer.Sound("break.wav")
+pygame.mixer.music.load("background.mp3")
+pygame.mixer.music.play(-1)
 
 
 class Player:
@@ -120,13 +126,17 @@ while True:
             exit()
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
+                jump_sound.play()
                 player.velocity = -10
             if event.key == pygame.K_1:
                 inventory.active_element = "grass"
+                click_sound.play()
             if event.key == pygame.K_2:
                 inventory.active_element = "dirt"
+                click_sound.play()
             if event.key == pygame.K_3:
                 inventory.active_element = "stone"
+                click_sound.play()
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 3:
                 print("Right click detected at position:", event.pos)
@@ -136,6 +146,12 @@ while True:
                 world_y = mouse_y + camera_y
                 block_x = (world_x // 60) * 60
                 block_y = (world_y // 60) * 60
+                can_place = True
+                for block in world:
+                    if block.rect.topleft == (block_x, block_y):
+                        can_place = False
+                if can_place == False:
+                    continue
                 if inventory.active_element == "grass":
                     if inventory.inventory["grass"] <= 0:
                         continue
@@ -163,7 +179,12 @@ while True:
                     if block.rect.topleft == (block_x, block_y):
                         if block.type == "Grass":
                             inventory.inventory["grass"] += 1
+                        if block.type == "Dirt":
+                            inventory.inventory["dirt"] += 1
+                        if block.type == "Stone":
+                            inventory.inventory["stone"] += 1
                         world.remove(block)
+                        break_sound.play()
 
 
     player.move()
