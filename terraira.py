@@ -48,8 +48,12 @@ class Player:
         pygame.draw.rect(window, (2, 26, 51), (legs_x, legs_y, self.legs.width, self.legs.height))
 
 
-    def move(self):
+    def move(self, blocks):
         keys = pygame.key.get_pressed()
+        old_head_x = self.head.x
+        old_body_x = self.body.x
+        old_legs_x = self.legs.x
+
         if keys[pygame.K_LEFT]:
             self.head.x -= self.speed
             self.body.x -= self.speed
@@ -58,6 +62,12 @@ class Player:
             self.head.x += self.speed
             self.body.x += self.speed
             self.legs.x += self.speed
+        for block in blocks:
+            if block.rect.colliderect(self.body):
+                self.head.x = old_head_x
+                self.body.x = old_body_x
+                self.legs.x = old_legs_x
+
 
 class Block:
     def __init__(self, x, y, color, type):
@@ -137,6 +147,8 @@ while True:
             if event.key == pygame.K_3:
                 inventory.active_element = "stone"
                 click_sound.play()
+            if event.key == pygame.K_ESCAPE:
+                print("----- Welcome To OffBrand Minecraft/Terraria -----")
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 3:
                 print("Right click detected at position:", event.pos)
@@ -168,6 +180,7 @@ while True:
                     block = Block(block_x,block_y, (89, 89, 89), "Stone")
                     inventory.inventory["stone"] -= 1
                 world.append(block)
+                click_sound.play()
             if event.button == 1:
                 mouse_x = event.pos[0]
                 mouse_y = event.pos[1]
@@ -187,7 +200,7 @@ while True:
                         break_sound.play()
 
 
-    player.move()
+    player.move(world)
     player.apply_gravity(world)
     player2.apply_gravity(world)
     window.fill((138, 210, 255))
